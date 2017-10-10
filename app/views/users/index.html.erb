@@ -1,0 +1,78 @@
+<head>
+  <style>
+  h2 {color:red;}
+  </style>
+</head>
+
+<h2 style=(color: red;)><%=flash[:message]%></h2>
+
+<%# Search form #%>
+<div class = "form-style-1">
+  <%= search_form_for @search do |f| %>
+  <ul>
+      <li><%= f.label :name_cont, "Name contains"%>
+      <%= f.text_field :name_cont %></li>
+
+      <li id="and"> <%= f.label :age_gteq, "Age between"%>
+      <%= f.text_field :age_gteq %></li>
+      <li id="and"><%= f.label :age_lteq, "and"%>
+      <%= f.text_field :age_lteq %></li>
+
+      <li><%= f.label :sex_eq, "Gender"%>
+      <%= select(:q, :sex_eq, %w[ Male Female Other], :include_blank => true) %></li>
+
+      <li><%= f.label :orientation_eq, "Sexual Orientation"%>
+      <%= select(:q, :orientation_eq, %w[Straight Lesbian Gay Fluent], :include_blank => true) %></li>
+
+      <li><%= f.label :ethnicity_eq, "Ethnicity"%>
+      <%= select(:q, :ethnicity_eq, ["White", "Hispanic or Latino", "Black/African descent", "Asian/Pacific Islander", "Korean", "Japanese", "Chinese", "Indian", "Arabic/Middle Eastern", "Native American", "Other"], :include_blank => true) %></li>
+
+      <li id="and"> <%= f.label :height_gteq, "Height between"%>
+      <%= f.text_field :height_gteq %></li>
+      <li><%= f.label :height_lteq, "and"%>
+      <%= f.text_field :height_lteq %></li>
+
+      <li><%= f.label :physical_shape_eq, "Physical Shape" %>
+      <%= select(:q, :physical_shape_eq, ["Athletic", "Could be better", "Big guy"], :include_blank => true) %></li>
+
+
+      <li>
+
+        <div id="interests_form">
+          <%= f.label :interest_ids_eq_any, "Interests" %>
+          <%= f.collection_check_boxes :interests_id_eq_any, Interest.all, :id, :name%>
+        </div>
+      </li>
+      <li><%= f.submit "Search" %></li>
+  </ul>
+<% end %>
+</div>
+
+
+<%# Search results #%>
+
+<h1>Users</h1>
+
+  <% @users.each do |user|%>
+
+  <div class="profile_short"> <%# creates a box where short profile info will be presented in search results %>
+    <div id="image-align">
+      <a href="<%= user_path(user) %>"><img id="avatar_img" src="<%= user.image %>"/>
+      </a>
+      <p><strong><%= link_to user.name, user_path(user) %></strong></p>
+      <p><strong>Age:</strong> <%= user.age %></p>
+      <p><strong>Orientation:</strong> <%= user.orientation %></p>
+      <% if user.bio.nil? %>
+        <% user.bio = "" %>
+      <p> <strong>Bio:</strong> <%= user.bio %> </p> <br><br>
+      <% elsif user.bio.length > 41 %>
+        <p><strong>Bio:</strong> <%= user.bio.chars[0..40].join %> ...</p>
+      <% else%>
+        <p><strong>Bio:</strong> ..</p> <br><br>
+      <% end %>
+      <%= button_to "View", user_path(user.id), method: "get" %>
+    </div>
+
+  </div>
+
+  <% end %>
